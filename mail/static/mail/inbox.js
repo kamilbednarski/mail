@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('sent');
 });
 
+
 function compose_email() {
 
   // Show compose view and hide other views
@@ -22,7 +23,22 @@ function compose_email() {
   document.querySelector('#compose-body').value = ''
 }
 
+
 function load_mailbox(mailbox) {
+  /*
+    This function loads selected mailbox.
+    Other views display property changes to 'none'.
+    
+    If there's no positions in selected mailbox,
+    function renders message saying so.
+
+    If there are positions in selected mailbox,
+    each of them gets wrapped in container with border.
+    
+    Each position has either gray background-color if status 'read' is true,
+    or white background-color if status 'read' is false.
+  */
+
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block'
   document.querySelector('#compose-view').style.display = 'none'
@@ -31,11 +47,13 @@ function load_mailbox(mailbox) {
   const emailsView = document.querySelector('#emails-view')
 
   // Show the mailbox name
-  emailsView.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3><hr>`
+  emailsView.innerHTML = `<h3 class='pb-2'>${mailbox.charAt(0).toUpperCase() 
+                          + mailbox.slice(1)}</h3>`
 
-  // Show headers for this mailbox
+  // Create headers for this mailbox
   let headerContainer = document.createElement('div')
-  headerContainer.classList.add('row')
+  headerContainer.classList.add('row', 'border-bottom', 'border-top', 
+                                'py-2', 'small', 'font-weight-bold')
 
   // Sender/Receipient(s) header
   if (mailbox === 'sent') {
@@ -52,6 +70,7 @@ function load_mailbox(mailbox) {
     // Create container for this header
     let senderHeaderContainer = document.createElement('div')
     senderHeaderContainer.classList.add('col')
+    
     // Add content to container
     var senderHeader = 'SENDER'
     senderHeaderContainer.append(senderHeader)
@@ -71,17 +90,21 @@ function load_mailbox(mailbox) {
   dateHeaderContainer.append('DATE')
   headerContainer.append(dateHeaderContainer)
 
-  // Create separator after headerContainer and add to emailsView
-  let hrLineSeparator = document.createElement('hr')
-
   // Add headers to emailsView
   emailsView.append(headerContainer)
-  emailsView.append(hrLineSeparator)
 
   // GET emails from API with matching mailbox name
   fetch(`/emails/${mailbox}`, {method: 'GET'})
   .then(response => response.json())
   .then(emails => {
+
+    // If no emails in mailbox, display message.
+    if (emails.length === 0) {
+      let messageContainer = document.createElement('div')
+      messageContainer.append('This mailbox is empty.')
+      messageContainer.classList.add('text-center', 'py-5')
+      emailsView.append(messageContainer)
+    }
 
     var i
     for (i = 0; i < emails.length; i++) {
@@ -89,6 +112,10 @@ function load_mailbox(mailbox) {
       // Create main container for each mail as a single row
       let mailContainer = document.createElement('div')
       mailContainer.classList.add('row')
+      mailContainer.classList.add('py-3', 'border-bottom')
+      // Set container id
+      mailContainer.setAttribute('id', 'single-mail')
+      mailContainer.dataset.emailId = `${emails[i]['id']}`
       
       if (mailbox === 'sent') {
         // If mailbox equals to sent, then create recipient(s) field
@@ -136,15 +163,13 @@ function load_mailbox(mailbox) {
       // Add column to main mailContainer
       mailContainer.append(mailDateContainer)
 
+      // If mail has read status, change background-color
+      if (emails[i]['read'] === true) {
+        mailContainer.classList.add('text-secondary', 'font-weight-light', 'bg-light')
+      }
+
       // Add container with single mail to main emailsView container
       emailsView.append(mailContainer)
-
-      // Create separator and add to emailsView after each e-mail
-      let hrLineSeparator = document.createElement('hr')
-      emailsView.append(hrLineSeparator)
-
     }
-
   })
-
 }

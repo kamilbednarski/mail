@@ -1,3 +1,9 @@
 textarea {
     min-height: 400px;
 }
+
+.mail-status-read {
+    background-color: lightgray !important;
+    color: red;
+    border: 1px red solid;
+}
