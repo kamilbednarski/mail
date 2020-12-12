@@ -15,12 +15,38 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none'
+  document.querySelector('#single-email-view').style.display = 'none'
   document.querySelector('#compose-view').style.display = 'block'
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = ''
   document.querySelector('#compose-subject').value = ''
   document.querySelector('#compose-body').value = ''
+}
+
+
+function load_email() {
+  event.stopImmediatePropagation()
+
+  // Show email view and hide other views
+  document.querySelector('#emails-view').style.display = 'none'
+  document.querySelector('#compose-view').style.display = 'none'
+  document.querySelector('#single-email-view').style.display = 'block'
+
+  // Save div where emails are going to be displayed
+  const emailsView = document.querySelector('#single-email-view')
+
+  // Save email id from dataset attribute
+  let emailId = event.target.dataset.emailId
+
+  // GET emails from API with matching mailbox name
+  fetch(`/emails/${emailId}`, {method: 'GET'})
+  .then(response => response.json())
+  .then(email => {})
+  // TODO - print content of email
+
+  // Log into console: email id from dataset
+  console.log(emailId)
 }
 
 
@@ -41,6 +67,7 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block'
+  document.querySelector('#single-email-view').style.display = 'none'
   document.querySelector('#compose-view').style.display = 'none'
 
   // Save div where emails are going to be displayed
@@ -111,8 +138,11 @@ function load_mailbox(mailbox) {
 
       // Create main container for each mail as a single row
       let mailContainer = document.createElement('div')
-      mailContainer.classList.add('row')
-      mailContainer.classList.add('py-3', 'border-bottom')
+      mailContainer.classList.add('row', 'py-3', 'border-bottom')
+
+      // AddEventListener to load single email
+      mailContainer.addEventListener('click', () => load_email())
+
       // Set container id
       mailContainer.setAttribute('id', 'single-mail')
       mailContainer.dataset.emailId = `${emails[i]['id']}`
@@ -122,6 +152,8 @@ function load_mailbox(mailbox) {
         // Create column with recipient(s)
         let mailRecipientsContainer = document.createElement('div')
         mailRecipientsContainer.classList.add('col')
+        // Add dataset emailId for this element (unique id of each email)
+        mailRecipientsContainer.dataset.emailId = `${emails[i]['id']}`
 
         // Get recipient(s) from emails Object
         let recipients = emails[i]['recipients']
@@ -144,7 +176,10 @@ function load_mailbox(mailbox) {
         // Create column with sender
         let mailSenderContainer = document.createElement('div')
         mailSenderContainer.classList.add('col')
+        // Add dataset emailId for this element (unique id of each email)
+        mailSenderContainer.dataset.emailId = `${emails[i]['id']}`
         mailSenderContainer.append(`${emails[i]['sender']}`)
+        
         // Add column to main mailContainer
         mailContainer.append(mailSenderContainer)
       }
@@ -152,6 +187,8 @@ function load_mailbox(mailbox) {
       // Create column with subject
       let mailSubjectContainer = document.createElement('div')
       mailSubjectContainer.classList.add('col')
+      // Add dataset emailId for this element (unique id of each email)
+      mailSubjectContainer.dataset.emailId = `${emails[i]['id']}`
       mailSubjectContainer.append(`${emails[i]['subject']}`)
       // Add column to main mailContainer
       mailContainer.append(mailSubjectContainer)
@@ -159,6 +196,8 @@ function load_mailbox(mailbox) {
       // Create column with date
       let mailDateContainer = document.createElement('div')
       mailDateContainer.classList.add('col')
+      // Add dataset emailId for this element (unique id of each email)
+      mailDateContainer.dataset.emailId = `${emails[i]['id']}`
       mailDateContainer.append(`${emails[i]['timestamp']}`)
       // Add column to main mailContainer
       mailContainer.append(mailDateContainer)
