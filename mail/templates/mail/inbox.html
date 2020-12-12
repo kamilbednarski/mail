@@ -2,14 +2,31 @@
 {% load static %}
 
 {% block body %}
-    <h2>{{ request.user.email }}</h2>
-
-    <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
-    <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
-    <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-    <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
-    <hr>
+    <div class="pb-3">
+        <div class="row">
+            <div class="col text-center">
+                <h2>{{ request.user.email }}</h2>
+            </div>
+        </div>
+        <div class="row border-bottom pb-3 pt-1 px-3">
+            <div class="col">
+                <button class="btn btn-sm btn-outline-primary btn-block" id="inbox">Inbox</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-sm btn-outline-primary btn-block" id="compose">Compose</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-sm btn-outline-primary btn-block" id="sent">Sent</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-sm btn-outline-primary btn-block" id="archived">Archived</button>
+            </div>
+            <div class="col">
+                <a class="btn btn-sm btn-outline-primary btn-block" href="{% url 'logout' %}">Log Out</a>
+            </div>
+        </div>
+    </div>
+    
 
     <div id="emails-view">
     </div>

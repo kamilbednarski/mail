@@ -145,9 +145,6 @@ function load_mailbox(mailbox) {
 
     }
 
-
-    console.log(emails)
-    console.log(emails.length)
   })
 
 }
