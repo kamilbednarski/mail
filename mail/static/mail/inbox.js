@@ -27,6 +27,8 @@ function compose_email() {
 
 function load_email() {
   event.stopImmediatePropagation()
+  // Delete content from single email view container
+  document.querySelector('#single-email-view').innerHTML = ""
 
   // Show email view and hide other views
   document.querySelector('#emails-view').style.display = 'none'
@@ -34,19 +36,67 @@ function load_email() {
   document.querySelector('#single-email-view').style.display = 'block'
 
   // Save div where emails are going to be displayed
-  const emailsView = document.querySelector('#single-email-view')
+  const singleEmailView = document.querySelector('#single-email-view')
 
   // Save email id from dataset attribute
   let emailId = event.target.dataset.emailId
 
-  // GET emails from API with matching mailbox name
+  // GET email from API with matching id
   fetch(`/emails/${emailId}`, {method: 'GET'})
   .then(response => response.json())
-  .then(email => {})
-  // TODO - print content of email
+  .then(email => {
+    console.log(email)
 
-  // Log into console: email id from dataset
-  console.log(emailId)
+    // SENDER AND DATE CONTAINER
+    // Sender container
+    let singleEmailSenderAndDateContainer = document.createElement('div')
+    singleEmailSenderAndDateContainer.classList.add('row', 'px-3')
+    let singleEmailSenderField = document.createElement('div')
+    singleEmailSenderField.classList.add('col', 'h5')
+    singleEmailSenderField.append(email['sender'])
+    // Date container
+    let singleEmailDateField = document.createElement('div')
+    singleEmailDateField.classList.add('col', 'small', 'text-right', 'text-secondary')
+    singleEmailDateField.append(email['timestamp'])
+    
+    // Add field to subject container
+    singleEmailSenderAndDateContainer.append(singleEmailSenderField)
+    singleEmailSenderAndDateContainer.append(singleEmailDateField)
+    
+    // SUBJECT CONTAINER
+    let singleEmailSubjectContainer = document.createElement('div')
+    singleEmailSubjectContainer.classList.add('row', 'px-3')
+    let singleEmailSubjectField = document.createElement('div')
+    singleEmailSubjectField.classList.add('col')
+    singleEmailSubjectField.append(email['subject'])
+    // Add field to subject container
+    singleEmailSubjectContainer.append(singleEmailSubjectField)
+
+    // RECEIPIENTS CONTAINER
+    let singleEmailRecipientsContainer = document.createElement('div')
+    singleEmailRecipientsContainer.classList.add('row', 'px-3')
+    let singleEmailRecipientsField = document.createElement('div')
+    singleEmailRecipientsField.classList.add('col', 'pb-3', 'border-bottom')
+    singleEmailRecipientsField.innerHTML = `To: <span class="text-secondary">${email['recipients']}</span>`
+    // Add field to subject container
+    singleEmailRecipientsContainer.append(singleEmailRecipientsField)
+
+    // BODY CONTAINER
+    let singleEmailBodyContainer = document.createElement('div')
+    singleEmailBodyContainer.classList.add('row', 'px-3')
+    let singleEmailBodyField = document.createElement('div')
+    singleEmailBodyField.classList.add('col', 'py-3')
+    singleEmailBodyField.append(email['body'])
+    // Add field to subject container
+    singleEmailBodyContainer.append(singleEmailBodyField)
+    
+    // Add all containers to main container
+    singleEmailView.append(singleEmailSenderAndDateContainer)
+    singleEmailView.append(singleEmailSubjectContainer)
+    singleEmailView.append(singleEmailRecipientsContainer)
+    singleEmailView.append(singleEmailBodyContainer)
+
+  })
 }
 
 
@@ -74,7 +124,7 @@ function load_mailbox(mailbox) {
   const emailsView = document.querySelector('#emails-view')
 
   // Show the mailbox name
-  emailsView.innerHTML = `<h3 class='pb-2'>${mailbox.charAt(0).toUpperCase() 
+  emailsView.innerHTML = `<h3 class='pb-2 px-3'>${mailbox.charAt(0).toUpperCase() 
                           + mailbox.slice(1)}</h3>`
 
   // GET emails from API with matching mailbox name
@@ -82,7 +132,6 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
 
-    console.log(emails)
     // If no emails in mailbox, display message.
     if (emails.length === 0) {
       let messageContainer = document.createElement('div')
@@ -93,7 +142,6 @@ function load_mailbox(mailbox) {
 
     var i
     for (i = 0; i < emails.length; i++) {
-
       /*
         MAIN CONTAINER
         constructed from mailContainer, which is a row
@@ -101,7 +149,7 @@ function load_mailbox(mailbox) {
         which is a column (class col).
       */
       let mailContainer = document.createElement('div')
-      mailContainer.classList.add('row', 'py-3', 'border-top')
+      mailContainer.classList.add('row', 'py-3', 'border-top', 'px-3')
       let mainContainer = document.createElement('div')
       mainContainer.classList.add('col')
 
