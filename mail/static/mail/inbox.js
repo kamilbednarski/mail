@@ -110,16 +110,26 @@ function load_mailbox(mailbox) {
       contactAndDateContainer.classList.add('row')
       // CONTAINER FOR CONTACT - SUBCONTAINER OF CONTACT AND DATE CONTAINER
       let contactContainer = document.createElement('div')
-      contactContainer.classList.add('col')
+      contactContainer.classList.add('col', 'font-weight-bold')
       if (mailbox === 'sender') {
         contactContainer.append(emails[i]['sender'])
       } else {
-        contactContainer.append(emails[i]['recipients'])
+        var recipients = emails[i]['recipients']
+        if (recipients.length > 2) {
+          // If more than two recipients
+          contactContainer.append(`${recipients[0]}, ${recipients[1]} and ${recipients.length - 2} more...`)
+        } else if (recipients.length === 2) {
+          // If two recipients
+          contactContainer.append(`${recipients[0]}, ${recipients[1]}`)
+        } else {
+          // If one recipient
+          contactContainer.append(recipients)
+        }
       }
       contactAndDateContainer.append(contactContainer)
       // CONTAINER FOR DATE - SUBCONTAINER OF CONTACT AND DATE CONTAINER
       let dateContainer = document.createElement('div')
-      dateContainer.classList.add('col')
+      dateContainer.classList.add('col', 'text-right', 'small')
       dateContainer.append(emails[i]['timestamp'])
       contactAndDateContainer.append(dateContainer)
 
@@ -138,6 +148,14 @@ function load_mailbox(mailbox) {
       if (emails[i]['read'] === true) {
         mailContainer.classList.add('text-secondary', 'font-weight-light', 'bg-light')
       }
+
+      // Add Event Listener for single mail
+      mailContainer.addEventListener('click', () => load_email())
+
+      // Add dataset with email id
+      contactContainer.dataset.emailId = `${emails[i]['id']}`
+      dateContainer.dataset.emailId = `${emails[i]['id']}`
+      subjectTextContainer.dataset.emailId = `${emails[i]['id']}`
 
       // Add subcontainers to main mailContainer for single mail
       mainContainer.append(contactAndDateContainer)
