@@ -267,6 +267,7 @@ function load_mailbox(mailbox) {
       // Add dataset with email id
       contactContainer.dataset.emailId = `${emails[i]['id']}`
       dateContainer.dataset.emailId = `${emails[i]['id']}`
+      mailContainer.dataset.emailId = `${emails[i]['id']}`
       subjectTextContainer.dataset.emailId = `${emails[i]['id']}`
         
       // Check conditions for archive and other mailboxes
@@ -301,4 +302,32 @@ function load_mailbox(mailbox) {
       } 
     }
   })
+}
+
+
+function send_email() {
+  /*
+    This function sets email read property to true.
+    This property changes visual appearance of given email,
+    when listed in mailbox.
+  */
+  let subjectInput = document.querySelector('#compose-subject').value
+  let bodyInput = document.querySelector('#compose-body').value
+  let recipientsInput = document.querySelector('#compose-recipients').value
+  
+  // Send new mail
+  fetch('/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      recipients: recipientsInput,
+      subject: subjectInput,
+      body: bodyInput
+    })
+  })
+  // Load sent mailbox
+  setTimeout(load_mailbox('sent'), 3000)
+
 }
