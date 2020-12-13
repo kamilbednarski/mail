@@ -25,6 +25,49 @@ function compose_email() {
 }
 
 
+function archive_email() {
+  /*
+    This function sets email archive property to true or false.
+    After proceeding it loads mailbox again.
+  */
+  event.stopImmediatePropagation()
+
+  // Save email id from dataset attribute
+  let emailId = event.target.dataset.emailId
+  // Save email id from dataset attribute
+  let isArchived = event.target.dataset.isArchived
+
+  if (isArchived == 'true') {
+    console.log('LOG: email unarchived')
+    fetch(`/emails/${emailId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        archived: false
+      })
+    }).then(response => console.log(response))
+
+    setTimeout(load_mailbox('archive'), 500)
+
+  } else {
+    console.log('LOG: email archived')
+    fetch(`/emails/${emailId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        archived: true
+      })
+    }).then(response => console.log(response))
+
+    setTimeout(load_mailbox('inbox'), 500)
+  }
+}
+
+
 function load_email() {
   event.stopImmediatePropagation()
   // Delete content from single email view container
@@ -151,7 +194,7 @@ function load_mailbox(mailbox) {
       let mailContainer = document.createElement('div')
       mailContainer.classList.add('row', 'py-3', 'border-top', 'px-3')
       let mainContainer = document.createElement('div')
-      mainContainer.classList.add('col')
+      mainContainer.classList.add('col')  
 
       // CONTAINER FOR CONTACT AND DATE - SUBCONTAINER OF MAIN CONTAINER
       let contactAndDateContainer = document.createElement('div')
@@ -204,13 +247,37 @@ function load_mailbox(mailbox) {
       contactContainer.dataset.emailId = `${emails[i]['id']}`
       dateContainer.dataset.emailId = `${emails[i]['id']}`
       subjectTextContainer.dataset.emailId = `${emails[i]['id']}`
+        
+      // Check conditions for archive and other mailboxes
+      if ((mailbox == 'archive' && emails[i]['archived'] == true) 
+        || (mailbox !== 'archive' && emails[i]['archived'] == false)){
+        // Add subcontainers to main mailContainer for single mail
+        mainContainer.append(contactAndDateContainer)
+        mainContainer.append(subjectContainer)
+        mailContainer.append(mainContainer)
 
-      // Add subcontainers to main mailContainer for single mail
-      mainContainer.append(contactAndDateContainer)
-      mainContainer.append(subjectContainer)
-      mailContainer.append(mainContainer)
-      // Add container with single mail to main emailsView container
-      emailsView.append(mailContainer)
+        if (mailbox !== 'sent') {
+          // BUTTON CONTAINER
+          let buttonContainer = document.createElement('div')
+          buttonContainer.classList.add('col-1')
+          let archiveButton = document.createElement('i')
+          archiveButton.classList.add('fas', 'fa-archive', 'text-primary')
+          // Add dataset with id to button
+          archiveButton.dataset.emailId = `${emails[i]['id']}`
+          archiveButton.dataset.isArchived = `${emails[i]['archived']}`
+          // Add button to container
+          buttonContainer.append(archiveButton)
+          // Add dataset with email id
+          buttonContainer.dataset.emailId = `${emails[i]['id']}`
+          // Add Event Listener for archive button
+          buttonContainer.addEventListener('click', () => archive_email())
+          // Add button to main container
+          mailContainer.append(buttonContainer)
+        }
+        
+        // Add container with single mail to main emailsView container
+        emailsView.append(mailContainer)
+      } 
     }
   })
 }
