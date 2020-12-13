@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#compose').addEventListener('click', compose_email)
 
   // By default, load the inbox
-  load_mailbox('sent');
+  load_mailbox('inbox');
 });
 
 
@@ -34,7 +34,7 @@ function archive_email() {
 
   // Save email id from dataset attribute
   let emailId = event.target.dataset.emailId
-  // Save email id from dataset attribute
+  // Check archived status of given email
   let isArchived = event.target.dataset.isArchived
 
   if (isArchived == 'true') {
@@ -47,8 +47,8 @@ function archive_email() {
       body: JSON.stringify({
         archived: false
       })
-    }).then(response => console.log(response))
-
+    })
+    // Load archive
     setTimeout(load_mailbox('archive'), 500)
 
   } else {
@@ -61,10 +61,29 @@ function archive_email() {
       body: JSON.stringify({
         archived: true
       })
-    }).then(response => console.log(response))
-
+    })
+    // Load inbox
     setTimeout(load_mailbox('inbox'), 500)
   }
+}
+
+
+function read_email(email_id) {
+  /*
+    This function sets email read property to true.
+    This property changes visual appearance of given email,
+    when listed in mailbox.
+  */
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      read: true
+    })
+  })
+
 }
 
 
@@ -88,7 +107,9 @@ function load_email() {
   fetch(`/emails/${emailId}`, {method: 'GET'})
   .then(response => response.json())
   .then(email => {
-    console.log(email)
+
+    // Set email property read to true
+    read_email(emailId)
 
     // SENDER AND DATE CONTAINER
     // Sender container
@@ -257,22 +278,22 @@ function load_mailbox(mailbox) {
         mailContainer.append(mainContainer)
 
         if (mailbox !== 'sent') {
-          // BUTTON CONTAINER
-          let buttonContainer = document.createElement('div')
-          buttonContainer.classList.add('col-1')
+          // BUTTON ARCHIVE CONTAINER
+          let buttonArchiveContainer = document.createElement('div')
+          buttonArchiveContainer.classList.add('col-1')
           let archiveButton = document.createElement('i')
           archiveButton.classList.add('fas', 'fa-archive', 'text-primary')
           // Add dataset with id to button
           archiveButton.dataset.emailId = `${emails[i]['id']}`
           archiveButton.dataset.isArchived = `${emails[i]['archived']}`
           // Add button to container
-          buttonContainer.append(archiveButton)
+          buttonArchiveContainer.append(archiveButton)
           // Add dataset with email id
-          buttonContainer.dataset.emailId = `${emails[i]['id']}`
+          buttonArchiveContainer.dataset.emailId = `${emails[i]['id']}`
           // Add Event Listener for archive button
-          buttonContainer.addEventListener('click', () => archive_email())
+          buttonArchiveContainer.addEventListener('click', () => archive_email())
           // Add button to main container
-          mailContainer.append(buttonContainer)
+          mailContainer.append(buttonArchiveContainer)
         }
         
         // Add container with single mail to main emailsView container
