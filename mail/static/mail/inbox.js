@@ -77,54 +77,12 @@ function load_mailbox(mailbox) {
   emailsView.innerHTML = `<h3 class='pb-2'>${mailbox.charAt(0).toUpperCase() 
                           + mailbox.slice(1)}</h3>`
 
-  // Create headers for this mailbox
-  let headerContainer = document.createElement('div')
-  headerContainer.classList.add('row', 'border-bottom', 'border-top', 
-                                'py-2', 'small', 'font-weight-bold')
-
-  // Sender/Receipient(s) header
-  if (mailbox === 'sent') {
-    // Create container for this header
-    let receipientsHeaderContainer = document.createElement('div')
-    receipientsHeaderContainer.classList.add('col')
-    // Add content to container
-    var receipientsHeader = 'RECEIPIENTS'
-    receipientsHeaderContainer.append(receipientsHeader)
-    // Add to headerContainer
-    headerContainer.append(receipientsHeaderContainer)
-
-  } else {
-    // Create container for this header
-    let senderHeaderContainer = document.createElement('div')
-    senderHeaderContainer.classList.add('col')
-    
-    // Add content to container
-    var senderHeader = 'SENDER'
-    senderHeaderContainer.append(senderHeader)
-    // Add to headerContainer
-    headerContainer.append(senderHeaderContainer)
-  }
-
-  // Subject header
-  let subjectHeaderContainer = document.createElement('div')
-  subjectHeaderContainer.classList.add('col')
-  subjectHeaderContainer.append('SUBJECT')
-  headerContainer.append(subjectHeaderContainer)
-
-  // Date header
-  let dateHeaderContainer = document.createElement('div')
-  dateHeaderContainer.classList.add('col')
-  dateHeaderContainer.append('DATE')
-  headerContainer.append(dateHeaderContainer)
-
-  // Add headers to emailsView
-  emailsView.append(headerContainer)
-
   // GET emails from API with matching mailbox name
   fetch(`/emails/${mailbox}`, {method: 'GET'})
   .then(response => response.json())
   .then(emails => {
 
+    console.log(emails)
     // If no emails in mailbox, display message.
     if (emails.length === 0) {
       let messageContainer = document.createElement('div')
@@ -136,77 +94,55 @@ function load_mailbox(mailbox) {
     var i
     for (i = 0; i < emails.length; i++) {
 
-      // Create main container for each mail as a single row
+      /*
+        MAIN CONTAINER
+        constructed from mailContainer, which is a row
+        (class row), containing subcontainer mainContainer,
+        which is a column (class col).
+      */
       let mailContainer = document.createElement('div')
-      mailContainer.classList.add('row', 'py-3', 'border-bottom')
+      mailContainer.classList.add('row', 'py-3', 'border-top')
+      let mainContainer = document.createElement('div')
+      mainContainer.classList.add('col')
 
-      // AddEventListener to load single email
-      mailContainer.addEventListener('click', () => load_email())
-
-      // Set container id
-      mailContainer.setAttribute('id', 'single-mail')
-      mailContainer.dataset.emailId = `${emails[i]['id']}`
-      
-      if (mailbox === 'sent') {
-        // If mailbox equals to sent, then create recipient(s) field
-        // Create column with recipient(s)
-        let mailRecipientsContainer = document.createElement('div')
-        mailRecipientsContainer.classList.add('col')
-        // Add dataset emailId for this element (unique id of each email)
-        mailRecipientsContainer.dataset.emailId = `${emails[i]['id']}`
-
-        // Get recipient(s) from emails Object
-        let recipients = emails[i]['recipients']
-        if (recipients.length > 1) {
-          // If there is more than one recipient
-          var recipientsField = `${recipients[0]}, ...`
-
-        } else {
-          // If there is only one recipient
-          var recipientsField = `${recipients[0]}`
-        }
-
-        // Add recipient(s) string representation to container
-        mailRecipientsContainer.append(recipientsField)
-        // Add column to main mailContainer
-        mailContainer.append(mailRecipientsContainer)
-
+      // CONTAINER FOR CONTACT AND DATE - SUBCONTAINER OF MAIN CONTAINER
+      let contactAndDateContainer = document.createElement('div')
+      contactAndDateContainer.classList.add('row')
+      // CONTAINER FOR CONTACT - SUBCONTAINER OF CONTACT AND DATE CONTAINER
+      let contactContainer = document.createElement('div')
+      contactContainer.classList.add('col')
+      if (mailbox === 'sender') {
+        contactContainer.append(emails[i]['sender'])
       } else {
-        // If mailbox isn't sent, then create sender field
-        // Create column with sender
-        let mailSenderContainer = document.createElement('div')
-        mailSenderContainer.classList.add('col')
-        // Add dataset emailId for this element (unique id of each email)
-        mailSenderContainer.dataset.emailId = `${emails[i]['id']}`
-        mailSenderContainer.append(`${emails[i]['sender']}`)
-        
-        // Add column to main mailContainer
-        mailContainer.append(mailSenderContainer)
+        contactContainer.append(emails[i]['recipients'])
       }
-      
-      // Create column with subject
-      let mailSubjectContainer = document.createElement('div')
-      mailSubjectContainer.classList.add('col')
-      // Add dataset emailId for this element (unique id of each email)
-      mailSubjectContainer.dataset.emailId = `${emails[i]['id']}`
-      mailSubjectContainer.append(`${emails[i]['subject']}`)
-      // Add column to main mailContainer
-      mailContainer.append(mailSubjectContainer)
-      
-      // Create column with date
-      let mailDateContainer = document.createElement('div')
-      mailDateContainer.classList.add('col')
-      // Add dataset emailId for this element (unique id of each email)
-      mailDateContainer.dataset.emailId = `${emails[i]['id']}`
-      mailDateContainer.append(`${emails[i]['timestamp']}`)
-      // Add column to main mailContainer
-      mailContainer.append(mailDateContainer)
+      contactAndDateContainer.append(contactContainer)
+      // CONTAINER FOR DATE - SUBCONTAINER OF CONTACT AND DATE CONTAINER
+      let dateContainer = document.createElement('div')
+      dateContainer.classList.add('col')
+      dateContainer.append(emails[i]['timestamp'])
+      contactAndDateContainer.append(dateContainer)
 
-      // If mail has read status, change background-color
+      // CONTAINER FOR SUBJECT - SUBCONTAINER OF MAIN CONTAINER
+      let subjectContainer = document.createElement('div')
+      subjectContainer.classList.add('row')
+      let subjectTextContainer = document.createElement('div')
+      subjectTextContainer.classList.add('col')
+      subjectTextContainer.append(emails[i]['subject'])
+      subjectContainer.append(subjectTextContainer)
+
+      /*
+        EMAIL DISPLAY SETTINGS DEPENDING ON READ STATUS
+        If mail has read status, change background-color
+      */
       if (emails[i]['read'] === true) {
         mailContainer.classList.add('text-secondary', 'font-weight-light', 'bg-light')
       }
 
+      // Add subcontainers to main mailContainer for single mail
+      mainContainer.append(contactAndDateContainer)
+      mainContainer.append(subjectContainer)
+      mailContainer.append(mainContainer)
       // Add container with single mail to main emailsView container
       emailsView.append(mailContainer)
     }
