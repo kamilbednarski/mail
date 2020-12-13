@@ -2,8 +2,20 @@ textarea {
     min-height: 400px;
 }
 
-.mail-status-read {
-    background-color: lightgray !important;
-    color: red;
-    border: 1px red solid;
+.menu-icon {
+    display: none;
+}
+
+.menu-text {
+    display: block;
+}
+
+@media only screen and (max-width: 545px) {
+    .menu-icon {
+        display: block;
+    }
+
+    .menu-text {
+        display: none;
+    }
 }

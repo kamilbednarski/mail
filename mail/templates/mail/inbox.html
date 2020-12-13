@@ -8,21 +8,36 @@
                 <h2>{{ request.user.email }}</h2>
             </div>
         </div>
-        <div class="row border-bottom pb-3 pt-1 px-3">
+        <div class="row border-bottom pb-4 pt-2 px-3">
             <div class="col">
-                <button class="btn btn-sm btn-outline-primary btn-block" id="inbox">Inbox</button>
+                <button class="btn btn-sm btn-outline-primary btn-block" id="compose">
+                    <i class="fas fa-pen menu-icon py-1"></i>
+                    <span class="menu-text">Compose</span>
+                </button>
             </div>
             <div class="col">
-                <button class="btn btn-sm btn-outline-primary btn-block" id="compose">Compose</button>
+                <button class="btn btn-sm btn-outline-primary btn-block" id="inbox">
+                    <i class="fas fa-inbox menu-icon py-1"></i>
+                    <span class="menu-text">Inbox</span>
+                </button>
             </div>
             <div class="col">
-                <button class="btn btn-sm btn-outline-primary btn-block" id="sent">Sent</button>
+                <button class="btn btn-sm btn-outline-primary btn-block" id="sent">
+                    <i class="fas fa-paper-plane menu-icon py-1"></i>
+                    <span class="menu-text">Sent</span>
+                </button>
             </div>
             <div class="col">
-                <button class="btn btn-sm btn-outline-primary btn-block" id="archived">Archived</button>
+                <button class="btn btn-sm btn-outline-primary btn-block" id="archived">
+                    <i class="fas fa-archive menu-icon py-1"></i>
+                    <span class="menu-text">Archived</span>
+                </button>
             </div>
             <div class="col">
-                <a class="btn btn-sm btn-outline-primary btn-block" href="{% url 'logout' %}">Log Out</a>
+                <a class="btn btn-sm btn-outline-primary btn-block" href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt menu-icon py-1"></i>
+                    <span class="menu-text">Log Out</span>
+                </a>
             </div>
         </div>
     </div>
