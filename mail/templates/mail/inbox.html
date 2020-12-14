@@ -4,11 +4,11 @@
 {% block body %}
     <div class="pb-3">
         <div class="row">
-            <div class="col text-center">
-                <h2>{{ request.user.email }}</h2>
+            <div class="col text-center pt-2">
+                <h2 id="logged_user">{{ request.user.email }}</h2>
             </div>
         </div>
-        <div class="row border-bottom pb-4 pt-2 px-3">
+        <div class="form-row border-bottom pb-4 pt-2 px-3">
             <div class="col">
                 <button class="btn btn-sm btn-outline-primary btn-block" id="compose">
                     <i class="fas fa-pen menu-icon py-1"></i>

@@ -1,21 +1,22 @@
 textarea {
-    min-height: 400px;
+    min-height: 330px;
 }
 
 .menu-icon {
-    display: none;
-}
-
-.menu-text {
     display: block;
 }
 
-@media screen and (max-width: 545px) {
+.menu-text {
+    display: none;
+}
+
+@media screen and (min-width: 545px) {
+
     .menu-icon {
-        display: block;
+        display: none;
     }
 
     .menu-text {
-        display: none;
+        display: block;
     }
 }

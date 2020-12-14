@@ -25,6 +25,62 @@ function compose_email() {
 }
 
 
+function reply_email(email_id) {
+  /*
+    This function lets user to reply to any email.
+  */
+ // Load compose_email view and clear out fields
+  compose_email()
+
+  // GET email  with matching id from API
+  fetch(`/emails/${email_id}`, {method: 'GET'})
+  .then(response => response.json())
+  .then(email => {
+    // Get data from original email
+    var sender = email['sender'].toString()
+    var recipients = email['recipients'].toString()
+    var subject = email['subject'].toString()
+    var body = email['body'].toString()
+    var logged_user = document.querySelector('#logged_user').innerHTML
+    var timestamp = email['timestamp']
+
+    // Add values to input fields
+    // RECIPIENTS FIELD
+    var new_recipients = recipients.replace(logged_user, '')
+    // Check if new_recipients includes sender from original email
+    if (!new_recipients.includes(sender)) {
+      // If not, add to string
+      new_recipients += sender
+    }
+    // Check if new_recipients ends with char ','
+    if(new_recipients[new_recipients.length-1] == ',') {
+      // If yes, remove it
+      new_recipients = new_recipients.slice(0, new_recipients.length-1)
+    }
+    // Add new_recipients to input field
+    document.querySelector('#compose-recipients').value = new_recipients
+    
+    // SUBJECT FIELD
+    // Check if subject already contains 'Re:' prefix
+    if (subject.includes('Re:')) {
+      // If yes, leave new subject unchanged
+      document.querySelector('#compose-subject').value = subject
+    } else {
+      // If not, add prefix to new subject
+      document.querySelector('#compose-subject').value = 'Re: ' + subject
+    }
+
+    // BODY FIELD
+    var dividing_line ='_____________________________'
+    var body_prefix = `\n\n${dividing_line}\n${sender} wrote\nat ${timestamp}:\n`
+    document.querySelector('#compose-body').value = body_prefix + '"' + body + '"'
+
+  })
+
+
+}
+
+
 function archive_email() {
   /*
     This function sets email archive property to true or false.
@@ -88,6 +144,10 @@ function read_email(email_id) {
 
 
 function load_email() {
+  /*
+    This function loads selected email.
+    Other views display property changes to 'none'.
+  */
   event.stopImmediatePropagation()
   // Delete content from single email view container
   document.querySelector('#single-email-view').innerHTML = ""
@@ -140,10 +200,20 @@ function load_email() {
     let singleEmailRecipientsContainer = document.createElement('div')
     singleEmailRecipientsContainer.classList.add('row', 'px-3')
     let singleEmailRecipientsField = document.createElement('div')
-    singleEmailRecipientsField.classList.add('col', 'pb-3', 'border-bottom')
+    singleEmailRecipientsField.classList.add('col', 'pb-3')
     singleEmailRecipientsField.innerHTML = `To: <span class="text-secondary">${email['recipients']}</span>`
     // Add field to subject container
     singleEmailRecipientsContainer.append(singleEmailRecipientsField)
+
+    // REPLY BUTTON CONTAINER
+    let buttonReplyContainer = document.createElement('div')
+    buttonReplyContainer.classList.add('row', 'border-bottom', 'px-3', 'pb-3')
+    let buttonReply = document.createElement('div')
+    buttonReply.addEventListener('click', () => reply_email(emailId))
+    buttonReply.classList.add('col-3')
+    buttonReply.innerHTML = '<div class="btn btn-sm btn-outline-primary btn-block"><i class="fas fa-reply menu-icon py-1"></i><span class="menu-text">Reply</span></div>'
+    // Add button to button container
+    buttonReplyContainer.append(buttonReply)
 
     // BODY CONTAINER
     let singleEmailBodyContainer = document.createElement('div')
@@ -158,6 +228,7 @@ function load_email() {
     singleEmailView.append(singleEmailSenderAndDateContainer)
     singleEmailView.append(singleEmailSubjectContainer)
     singleEmailView.append(singleEmailRecipientsContainer)
+    singleEmailView.append(buttonReplyContainer)
     singleEmailView.append(singleEmailBodyContainer)
 
   })
@@ -223,7 +294,7 @@ function load_mailbox(mailbox) {
       // CONTAINER FOR CONTACT - SUBCONTAINER OF CONTACT AND DATE CONTAINER
       let contactContainer = document.createElement('div')
       contactContainer.classList.add('col', 'font-weight-bold')
-      if (mailbox === 'sender') {
+      if (mailbox !== 'sent') {
         contactContainer.append(emails[i]['sender'])
       } else {
         var recipients = emails[i]['recipients']
@@ -242,7 +313,9 @@ function load_mailbox(mailbox) {
       // CONTAINER FOR DATE - SUBCONTAINER OF CONTACT AND DATE CONTAINER
       let dateContainer = document.createElement('div')
       dateContainer.classList.add('col', 'text-right', 'small')
-      dateContainer.append(emails[i]['timestamp'])
+      var date = emails[i]['timestamp'].split(', ')
+      dateContainer.innerHTML = `${date[0]}<br>${date[1]}`
+      // dateContainer.append(emails[i]['timestamp'])
       contactAndDateContainer.append(dateContainer)
 
       // CONTAINER FOR SUBJECT - SUBCONTAINER OF MAIN CONTAINER
@@ -328,6 +401,6 @@ function send_email() {
     })
   })
   // Load sent mailbox
-  setTimeout(load_mailbox('sent'), 3000)
+  setTimeout(load_mailbox('sent'), 4000)
 
 }
