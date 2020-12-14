@@ -29,6 +29,7 @@ function reply_email(email_id) {
   /*
     This function lets user to reply to any email.
   */
+
  // Load compose_email view and clear out fields
   compose_email()
 
@@ -201,7 +202,8 @@ function load_email() {
     singleEmailRecipientsContainer.classList.add('row', 'px-3')
     let singleEmailRecipientsField = document.createElement('div')
     singleEmailRecipientsField.classList.add('col', 'pb-3')
-    singleEmailRecipientsField.innerHTML = `To: <span class="text-secondary">${email['recipients']}</span>`
+    var recipients_formatted = email['recipients'].toString().replace(',', ', ')
+    singleEmailRecipientsField.innerHTML = `To: <span class="text-secondary">${recipients_formatted}</span>`
     // Add field to subject container
     singleEmailRecipientsContainer.append(singleEmailRecipientsField)
 

@@ -1,27 +1,45 @@
 {% extends "mail/layout.html" %}
 
 {% block body %}
-
-    <h2>Register</h2>
-
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
-
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
+    <div class="container login-container border rounded">
+        <div class="row pb-2">
+            <div class="col text-center">
+                <h2>Register</h2>
+            </div>
         </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
+        <div class="row">
+            <div class="col">
+                {% if message %}
+                    <div>{{ message }}</div>
+                {% endif %}
+            </div>
         </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+        <div class="row">
+            <div class="col">
+                <form action="{% url 'register' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input class="form-control" type="email" name="email" placeholder="Email Address">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="password" name="password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+                    </div>
+                    <div class="text-center pb-3">
+                        <input class="btn btn-outline-primary px-5" type="submit" value="Register">
+                    </div>
+                </form>
+                <hr>
+                <div class="text-center">
+                    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+                </div>
+            </div>
         </div>
-        <input class="btn btn-primary" type="submit" value="Register">
-    </form>
+    </div>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+    
+    
 
 {% endblock %}

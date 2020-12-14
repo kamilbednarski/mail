@@ -1,24 +1,40 @@
 {% extends "mail/layout.html" %}
 
 {% block body %}
-
-    <h2>Login</h2>
-
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
-
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input autofocus class="form-control" type="email" name="email" placeholder="Email">
+    <div class="container login-container border rounded">
+        <div class="row pb-2">
+            <div class="col text-center">
+                <h2>Login</h2>
+            </div>
         </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
+        <div class="row">
+            <div class="col">
+                {% if message %}
+                    <div class="text-center small" style="color: rgb(156, 21, 21);">{{ message }}</div>
+                {% endif %}
+            </div>
         </div>
-        <input class="btn btn-primary" type="submit" value="Login">
-    </form>
-
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
-
+        <div class="row">
+            <div class="col">
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input autofocus class="form-control" type="email" name="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="password" name="password" placeholder="Password">
+                    </div>
+                    <div class="text-center pb-3">
+                        <input class="btn btn-outline-primary px-5" type="submit" value="Login">
+                    </div>
+                </form>
+                <hr>
+                <div class="text-center">
+                    Don't have an account? <a href="{% url 'register' %}">Register here.</a> 
+                </div>
+            </div>
+        </div>
+           
+    </div>
+    
 {% endblock %}

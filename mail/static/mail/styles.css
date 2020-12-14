@@ -1,5 +1,5 @@
 textarea {
-    min-height: 330px;
+    min-height: 300px;
 }
 
 .menu-icon {
@@ -10,7 +10,21 @@ textarea {
     display: none;
 }
 
+.login-container {
+    padding: 8vw;
+    margin-top: 25vh;
+    max-width: 550px;
+}
+.logged_user_text {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
 @media screen and (min-width: 545px) {
+
+    .logged_user_text {
+        font-size: 2em;
+    }
 
     .menu-icon {
         display: none;
