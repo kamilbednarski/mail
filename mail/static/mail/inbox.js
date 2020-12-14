@@ -51,12 +51,20 @@ function reply_email(email_id) {
     // Check if new_recipients includes sender from original email
     if (!new_recipients.includes(sender)) {
       // If not, add to string
-      new_recipients += sender
+      new_recipients += ',' + sender
     }
     // Check if new_recipients ends with char ','
     if(new_recipients[new_recipients.length-1] == ',') {
       // If yes, remove it
       new_recipients = new_recipients.slice(0, new_recipients.length-1)
+    }
+    if(new_recipients[0] == ',') {
+      // If yes, remove it
+      new_recipients = new_recipients.slice(1, new_recipients.length)
+    }
+    if(new_recipients.includes(',,')) {
+      // If yes, remove it
+      new_recipients = recipients.replace(',,', ',')
     }
     // Add new_recipients to input field
     document.querySelector('#compose-recipients').value = new_recipients
