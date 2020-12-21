@@ -232,9 +232,7 @@ function load_email() {
     singleEmailBodyContainer.classList.add('row', 'px-3')
     let singleEmailBodyField = document.createElement('div')
     singleEmailBodyField.classList.add('col', 'py-3')
-    console.log(email['body'])
     singleEmailBodyField.innerText = email['body']
-    // singleEmailBodyField.append(email['body'])
     // Add field to subject container
     singleEmailBodyContainer.append(singleEmailBodyField)
 
