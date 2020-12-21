@@ -68,7 +68,7 @@ function reply_email(email_id) {
     }
     // Add new_recipients to input field
     document.querySelector('#compose-recipients').value = new_recipients
-    
+
     // SUBJECT FIELD
     // Check if subject already contains 'Re:' prefix
     if (subject.includes('Re:')) {
@@ -112,9 +112,10 @@ function archive_email() {
       body: JSON.stringify({
         archived: false
       })
-    })
+    }).then(load_mailbox('archive'))
+    // TODO: load only after fetch is done
     // Load archive
-    setTimeout(load_mailbox('archive'), 500)
+    // setTimeout(load_mailbox('archive'), 500)
 
   } else {
     console.log('LOG: email archived')
@@ -126,9 +127,10 @@ function archive_email() {
       body: JSON.stringify({
         archived: true
       })
-    })
+    }).then(load_mailbox('inbox'))
+    // TODO: load only after fetch is done
     // Load inbox
-    setTimeout(load_mailbox('inbox'), 500)
+    // setTimeout(load_mailbox('inbox'), 500)
   }
 }
 
@@ -191,11 +193,11 @@ function load_email() {
     let singleEmailDateField = document.createElement('div')
     singleEmailDateField.classList.add('col', 'small', 'text-right', 'text-secondary')
     singleEmailDateField.append(email['timestamp'])
-    
+
     // Add field to subject container
     singleEmailSenderAndDateContainer.append(singleEmailSenderField)
     singleEmailSenderAndDateContainer.append(singleEmailDateField)
-    
+
     // SUBJECT CONTAINER
     let singleEmailSubjectContainer = document.createElement('div')
     singleEmailSubjectContainer.classList.add('row', 'px-3')
@@ -230,10 +232,12 @@ function load_email() {
     singleEmailBodyContainer.classList.add('row', 'px-3')
     let singleEmailBodyField = document.createElement('div')
     singleEmailBodyField.classList.add('col', 'py-3')
-    singleEmailBodyField.append(email['body'])
+    console.log(email['body'])
+    singleEmailBodyField.innerText = email['body']
+    // singleEmailBodyField.append(email['body'])
     // Add field to subject container
     singleEmailBodyContainer.append(singleEmailBodyField)
-    
+
     // Add all containers to main container
     singleEmailView.append(singleEmailSenderAndDateContainer)
     singleEmailView.append(singleEmailSubjectContainer)
@@ -249,13 +253,13 @@ function load_mailbox(mailbox) {
   /*
     This function loads selected mailbox.
     Other views display property changes to 'none'.
-    
+
     If there's no positions in selected mailbox,
     function renders message saying so.
 
     If there are positions in selected mailbox,
     each of them gets wrapped in container with border.
-    
+
     Each position has either gray background-color if status 'read' is true,
     or white background-color if status 'read' is false.
   */
@@ -269,7 +273,7 @@ function load_mailbox(mailbox) {
   const emailsView = document.querySelector('#emails-view')
 
   // Show the mailbox name
-  emailsView.innerHTML = `<h3 class='pb-2 px-3'>${mailbox.charAt(0).toUpperCase() 
+  emailsView.innerHTML = `<h3 class='pb-2 px-3'>${mailbox.charAt(0).toUpperCase()
                           + mailbox.slice(1)}</h3>`
 
   // GET emails from API with matching mailbox name
@@ -296,7 +300,7 @@ function load_mailbox(mailbox) {
       let mailContainer = document.createElement('div')
       mailContainer.classList.add('row', 'py-3', 'border-top', 'px-3')
       let mainContainer = document.createElement('div')
-      mainContainer.classList.add('col')  
+      mainContainer.classList.add('col')
 
       // CONTAINER FOR CONTACT AND DATE - SUBCONTAINER OF MAIN CONTAINER
       let contactAndDateContainer = document.createElement('div')
@@ -352,9 +356,9 @@ function load_mailbox(mailbox) {
       dateContainer.dataset.emailId = `${emails[i]['id']}`
       mailContainer.dataset.emailId = `${emails[i]['id']}`
       subjectTextContainer.dataset.emailId = `${emails[i]['id']}`
-        
+
       // Check conditions for archive and other mailboxes
-      if ((mailbox == 'archive' && emails[i]['archived'] == true) 
+      if ((mailbox == 'archive' && emails[i]['archived'] == true)
         || (mailbox !== 'archive' && emails[i]['archived'] == false)){
         // Add subcontainers to main mailContainer for single mail
         mainContainer.append(contactAndDateContainer)
@@ -379,10 +383,10 @@ function load_mailbox(mailbox) {
           // Add button to main container
           mailContainer.append(buttonArchiveContainer)
         }
-        
+
         // Add container with single mail to main emailsView container
         emailsView.append(mailContainer)
-      } 
+      }
     }
   })
 }
@@ -397,7 +401,7 @@ function send_email() {
   let subjectInput = document.querySelector('#compose-subject').value
   let bodyInput = document.querySelector('#compose-body').value
   let recipientsInput = document.querySelector('#compose-recipients').value
-  
+
   // Send new mail
   fetch('/emails', {
     method: 'POST',
@@ -409,8 +413,9 @@ function send_email() {
       subject: subjectInput,
       body: bodyInput
     })
-  })
+  }).then(load_mailbox('sent'))
+  // TODO: load only after fetch is done
   // Load sent mailbox
-  setTimeout(load_mailbox('sent'), 4000)
+  // setTimeout(load_mailbox('sent'), 4000)
 
 }
