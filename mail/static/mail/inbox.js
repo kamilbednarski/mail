@@ -114,6 +114,7 @@ function archive_email() {
       })
     }).then(load_mailbox('archive'))
     // TODO: load only after fetch is done
+    // check 'promises/callbacks
     // Load archive
     // setTimeout(load_mailbox('archive'), 500)
 
@@ -129,6 +130,7 @@ function archive_email() {
       })
     }).then(load_mailbox('inbox'))
     // TODO: load only after fetch is done
+    // check 'promises/callbacks
     // Load inbox
     // setTimeout(load_mailbox('inbox'), 500)
   }
