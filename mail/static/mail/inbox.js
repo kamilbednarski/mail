@@ -114,7 +114,7 @@ function archive_email() {
       })
     }).then(load_mailbox('archive'))
     // TODO: load only after fetch is done
-    // check 'promises/callbacks
+    // check 'promises/callbacks to prevent late refresh
     // Load archive
     // setTimeout(load_mailbox('archive'), 500)
 
