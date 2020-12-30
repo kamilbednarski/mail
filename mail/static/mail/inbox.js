@@ -112,11 +112,7 @@ function archive_email() {
       body: JSON.stringify({
         archived: false
       })
-    }).then(load_mailbox('archive'))
-    // TODO: load only after fetch is done
-    // check 'promises/callbacks to prevent late refresh
-    // Load archive
-    // setTimeout(load_mailbox('archive'), 500)
+    }).then(() => load_mailbox('archive'))
 
   } else {
     console.log('LOG: email archived')
@@ -128,11 +124,7 @@ function archive_email() {
       body: JSON.stringify({
         archived: true
       })
-    }).then(load_mailbox('inbox'))
-    // TODO: load only after fetch is done
-    // check 'promises/callbacks
-    // Load inbox
-    // setTimeout(load_mailbox('inbox'), 500)
+    }).then(() => load_mailbox('inbox'))
   }
 }
 
@@ -413,9 +405,5 @@ function send_email() {
       subject: subjectInput,
       body: bodyInput
     })
-  }).then(load_mailbox('sent'))
-  // TODO: load only after fetch is done
-  // Load sent mailbox
-  // setTimeout(load_mailbox('sent'), 4000)
-
+  }).then(() => load_mailbox('sent'))
 }
